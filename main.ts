@@ -1,36 +1,6 @@
 namespace SpriteKind {
     export const UI = SpriteKind.create()
-    export const Bomb = SpriteKind.create()
 }
-function explode () {
-    animation.runImageAnimation(
-    bomb,
-    assets.animation`explosion`,
-    200,
-    false
-    )
-    nearby_enemies = spriteutils.getSpritesWithin(SpriteKind.Enemy, 60, bomb)
-    for (let value of nearby_enemies) {
-        sprites.destroy(value)
-    }
-    pause(400)
-    bomb.setImage(assets.image`empty`)
-    has_bomb = true
-}
-controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (has_bomb) {
-        has_bomb = false
-        x_vel = Render.getAttribute(Render.attribute.dirX) * throw_speed
-        y_vel = Render.getAttribute(Render.attribute.dirY) * throw_speed
-        bomb.setPosition(me.x, me.y)
-        bomb.setImage(assets.image`bomb`)
-        bomb.setVelocity(x_vel, y_vel)
-        Render.jumpWithHeightAndDuration(bomb, 5, 750)
-        timer.after(750, function () {
-            explode()
-        })
-    }
-})
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (projectile, enemy) {
     tilesAdvanced.followUsingPathfinding(enemy, me, 0)
     enemy_count += -1
@@ -108,16 +78,13 @@ function setup_ui () {
 }
 let crosshair: Sprite = null
 let warning_sprite: Sprite = null
+let nearby_enemies: Sprite[] = []
 let ghost: Sprite = null
 let enemy_counter: TextSprite = null
 let projectile: Sprite = null
 let y_vel = 0
 let x_vel = 0
-let nearby_enemies: Sprite[] = []
 let me: Sprite = null
-let bomb: Sprite = null
-let throw_speed = 0
-let has_bomb = false
 let enemy_count = 0
 let wave_number = 0
 let knockback_force = 0
@@ -126,26 +93,6 @@ projectile_speed = 120
 knockback_force = 4
 wave_number = 0
 enemy_count = 0
-has_bomb = true
-throw_speed = 60
-bomb = sprites.create(img`
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    `, SpriteKind.Bomb)
 me = Render.getRenderSpriteVariable()
 Render.moveWithController(4, 3)
 setup_ui()
