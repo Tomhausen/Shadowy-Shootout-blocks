@@ -12,6 +12,9 @@ function explode () {
     nearby_enemies = spriteutils.getSpritesWithin(SpriteKind.Enemy, 60, bomb)
     for (let value of nearby_enemies) {
         sprites.destroy(value)
+        enemy_count += -1
+        update_enemy_counter()
+        info.changeScoreBy(100)
     }
     pause(400)
     bomb.setImage(assets.image`empty`)
@@ -56,7 +59,7 @@ function update_enemy_counter () {
 }
 function spawn_enemy () {
     ghost = sprites.create(assets.image`ghost`, SpriteKind.Enemy)
-    while (spriteutils.distanceBetween(me, ghost) < 300) {
+    while (spriteutils.distanceBetween(me, ghost) < 250) {
         tiles.placeOnRandomTile(ghost, assets.tile`enemy spawn`)
     }
     tilesAdvanced.followUsingPathfinding(ghost, me, randint(10, 60))
