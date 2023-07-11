@@ -34,6 +34,17 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         })
     }
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`door entry`, function (sprite, location) {
+    adjacent_tiles = tilesAdvanced.getAdjacentTiles(location, 2)
+    for (let value of adjacent_tiles) {
+        if (tiles.tileAtLocationEquals(value, assets.tile`door`)) {
+            tiles.setWallAt(value, false)
+            timer.after(500, function () {
+                close_doors()
+            })
+        }
+    }
+})
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (projectile, enemy) {
     tilesAdvanced.followUsingPathfinding(enemy, me, 0)
     enemy_count += -1
@@ -53,6 +64,17 @@ function setup_level () {
     tiles.placeOnRandomTile(me, assets.tile`player spawn`)
     info.setLife(3)
     spawn_wave()
+}
+function close_doors () {
+    if (tiles.tileAtLocationEquals(me.tilemapLocation(), assets.tile`door`)) {
+        timer.after(500, function () {
+            close_doors()
+        })
+    } else {
+        for (let value of tiles.getTilesByType(assets.tile`door`)) {
+            tiles.setWallAt(value, true)
+        }
+    }
 }
 function update_enemy_counter () {
     enemy_counter.setText("Left in wave:" + enemy_count)
@@ -114,6 +136,7 @@ let warning_sprite: Sprite = null
 let ghost: Sprite = null
 let enemy_counter: TextSprite = null
 let projectile: Sprite = null
+let adjacent_tiles: tiles.Location[] = []
 let y_vel = 0
 let x_vel = 0
 let nearby_enemies: Sprite[] = []
